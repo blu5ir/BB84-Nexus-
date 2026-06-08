@@ -1157,7 +1157,7 @@ def encrypt():
     data = request.get_json()
     message = data.get('message', '')
     
-    if 'final_key' not in session:
+   
         return jsonify({'status': 'error', 'message': 'No key established'})
     
     final_key = session['final_key']
