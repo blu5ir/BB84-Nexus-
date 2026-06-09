@@ -747,7 +747,7 @@ HTML_TEMPLATE = """
                 </div>
             </div>
         </div>
-    </div>
+    </div style="text-align:center;color:#00f0ff;padding:10px;">🚀 v1.0.1>
 
     <script>
         function showPage(page) {
