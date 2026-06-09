@@ -629,7 +629,7 @@ HTML_TEMPLATE = """
                     <h2>🔬 Protocol Control</h2>
                     <div class="control-group">
                         <h3>Step 1: Alice Prepares</h3>
-                        <button id="alice-generate">Generate & Send Qubits</button>
+                        <button id="alice-generate">add some Qubits</button>
                         <div class="step-status" id="alice-status">
                             <span class="status-indicator status-pending"></span>Awaiting generation
                         </div>
@@ -640,7 +640,7 @@ HTML_TEMPLATE = """
                             <input type="checkbox" id="eavesdrop-check">
                             <label>⚠️ Enable Eve's Interception</label>
                         </div>
-                        <button id="bob-measure" disabled>Receive & Measure Qubits</button>
+                        <button id="bob-measure" disabled>got some qubits</button>
                         <div class="step-status" id="bob-status">
                             <span class="status-indicator status-pending"></span>Awaiting qubits
                         </div>
