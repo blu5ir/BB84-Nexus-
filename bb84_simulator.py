@@ -1190,9 +1190,9 @@ def decrypt():
 @app.route('/update_server', methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo_dir = '/home/bluSir/Nexus'
+        repo_dir = '/home/blu5ir/Nexus'
         subprocess.run(['git', 'pull', 'origin', 'main'], cwd=repo_dir)
-        wsgi_file = '/var/www/blusir_pythonanywhere_com_wsgi.py'
+        wsgi_file = '/var/www/blu5ir_pythonanywhere_com_wsgi.py'
         if os.path.exists(wsgi_file):
             os.utime(wsgi_file, None)
         return 'Update and reload successful!', 200
