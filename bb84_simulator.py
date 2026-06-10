@@ -3,7 +3,8 @@ import secrets
 import hashlib
 from datetime import datetime
 import socket
-
+import os
+import subprocess
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)  # Secure random secret key
 
@@ -59,7 +60,7 @@ HTML_TEMPLATE = """
             left: 0;
             right: 0;
             bottom: 0;
-            background-image:
+            background-image: 
                 radial-gradient(2px 2px at 20px 30px, rgba(0, 240, 255, 0.3), rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 40px 70px, rgba(57, 255, 20, 0.3), rgba(0,0,0,0)),
                 radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.3), rgba(0,0,0,0)),
@@ -293,10 +294,10 @@ HTML_TEMPLATE = """
             left: 80px;
             right: 80px;
             height: 2px;
-            background: linear-gradient(90deg,
-                transparent,
-                rgba(0, 240, 255, 0.3) 20%,
-                rgba(0, 240, 255, 0.3) 80%,
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 240, 255, 0.3) 20%, 
+                rgba(0, 240, 255, 0.3) 80%, 
                 transparent
             );
             transform: translateY(-50%);
@@ -342,14 +343,14 @@ HTML_TEMPLATE = """
             z-index: 10;
         }
 
-        .node.alice {
-            left: 10px;
+        .node.alice { 
+            left: 10px; 
             border-color: var(--accent-cyan);
             box-shadow: var(--glow-cyan);
             color: var(--accent-cyan);
         }
-        .node.bob {
-            right: 10px;
+        .node.bob { 
+            right: 10px; 
             border-color: var(--accent-green);
             box-shadow: var(--glow-green);
             color: var(--accent-green);
@@ -629,7 +630,7 @@ HTML_TEMPLATE = """
                     <h2>🔬 Protocol Control</h2>
                     <div class="control-group">
                         <h3>Step 1: Alice Prepares</h3>
-                        <button id="alice-generate">add some Qubits</button>
+                        <button id="alice-generate">Generate & Send Qubits</button>
                         <div class="step-status" id="alice-status">
                             <span class="status-indicator status-pending"></span>Awaiting generation
                         </div>
@@ -640,7 +641,7 @@ HTML_TEMPLATE = """
                             <input type="checkbox" id="eavesdrop-check">
                             <label>⚠️ Enable Eve's Interception</label>
                         </div>
-                        <button id="bob-measure" disabled>got some qubits</button>
+                        <button id="bob-measure" disabled>Receive & Measure Qubits</button>
                         <div class="step-status" id="bob-status">
                             <span class="status-indicator status-pending"></span>Awaiting qubits
                         </div>
@@ -704,7 +705,7 @@ HTML_TEMPLATE = """
         <div id="about-page" class="about-content">
             <h2>Understanding BB84 Protocol</h2>
             <p>The BB84 protocol, developed by Bennett and Brassard in 1984, uses quantum mechanics to enable secure key distribution. Its security is guaranteed by the laws of physics, not computational complexity.</p>
-
+            
             <h3>Quantum Bases</h3>
             <div class="basis-cards">
                 <div class="basis-card">
@@ -747,7 +748,7 @@ HTML_TEMPLATE = """
                 </div>
             </div>
         </div>
-    </div style="text-align:center;color:#00f0ff;padding:10px;">🚀 v1.0.1>
+    </div>
 
     <script>
         function showPage(page) {
@@ -799,7 +800,7 @@ HTML_TEMPLATE = """
             };
 
             const renderBitsBases = (container, items, type) => {
-                container.innerHTML = items.map(item =>
+                container.innerHTML = items.map(item => 
                     `<div class="${type} ${item}">${item}</div>`
                 ).join('');
             };
@@ -812,7 +813,7 @@ HTML_TEMPLATE = """
                         photon.style.top = `${30 + Math.random() * 100}px`;
                         photon.style.animationDelay = '0s';
                         elements.photonStream.appendChild(photon);
-
+                        
                         setTimeout(() => {
                             if (photon.parentNode) {
                                 photon.parentNode.removeChild(photon);
@@ -841,20 +842,20 @@ HTML_TEMPLATE = """
             // Step 1: Alice generates qubits
             elements.aliceGenerate.addEventListener('click', async () => {
                 updateStatus(elements.statusElements.alice, 'pending', 'Generating quantum states...');
-
+                
                 try {
                     const response = await fetch('/init_protocol', { method: 'POST' });
                     const data = await response.json();
-
+                    
                     renderBitsBases(elements.aliceBits, data.alice_bits, 'bit');
                     renderBitsBases(elements.aliceBases, data.alice_bases, 'basis');
-
+                    
                     animatePhotons(data.alice_bits.length);
-
+                    
                     updateStatus(elements.statusElements.alice, 'complete', `${data.alice_bits.length} qubits transmitted`);
                     elements.bobMeasure.disabled = false;
                     protocolState.currentStep = 1;
-
+                    
                     addChatMessage('alice', 'Alice', `Generated and sent ${data.alice_bits.length} qubits through quantum channel`);
                 } catch (error) {
                     updateStatus(elements.statusElements.alice, 'error', 'Transmission failed');
@@ -866,7 +867,7 @@ HTML_TEMPLATE = """
             elements.bobMeasure.addEventListener('click', async () => {
                 updateStatus(elements.statusElements.bob, 'pending', 'Measuring quantum states...');
                 const isEveActive = elements.eavesdropCheck.checked;
-
+                
                 try {
                     const response = await fetch('/measure_qubits', {
                         method: 'POST',
@@ -874,19 +875,19 @@ HTML_TEMPLATE = """
                         body: JSON.stringify({ eavesdrop: isEveActive })
                     });
                     const data = await response.json();
-
+                    
                     renderBitsBases(elements.bobBases, data.bob_bases, 'basis');
                     renderBitsBases(elements.bobResults, data.bob_results, 'bit');
-
+                    
                     updateStatus(elements.statusElements.bob, 'complete', 'Measurement complete');
                     elements.reconcile.disabled = false;
                     protocolState.currentStep = 2;
-
+                    
                     if (isEveActive) {
                         setTimeout(() => animatePhotons(data.bob_results.length, true), 500);
                         addChatMessage('eve', 'Eve', 'Intercepted and measured quantum states!');
                     }
-
+                    
                     addChatMessage('bob', 'Bob', 'Received and measured qubits with random bases');
                 } catch (error) {
                     updateStatus(elements.statusElements.bob, 'error', 'Measurement failed');
@@ -897,18 +898,18 @@ HTML_TEMPLATE = """
             // Step 3: Key reconciliation with privacy amplification
             elements.reconcile.addEventListener('click', async () => {
                 updateStatus(elements.statusElements.reconcile, 'pending', 'Reconciling keys...');
-
+                
                 try {
                     const response = await fetch('/reconcile', { method: 'POST' });
                     const data = await response.json();
-
+                    
                     if (data.status !== 'success') {
                         updateStatus(elements.statusElements.reconcile, 'error', 'Reconciliation failed');
                         return;
                     }
-
+                    
                     const errorRatePct = (data.error_rate * 100).toFixed(2);
-
+                    
                     if (data.eavesdrop_detected) {
                         elements.reconResult.className = 'detected';
                         elements.reconResult.innerHTML = `⚠️ EAVESDROPPER DETECTED!<br>Error Rate: ${errorRatePct}%`;
@@ -918,26 +919,26 @@ HTML_TEMPLATE = """
                         elements.reconResult.className = 'not-detected';
                         elements.reconResult.innerHTML = `✅ Secure Channel Established<br>Error Rate: ${errorRatePct}%`;
                         updateStatus(elements.statusElements.reconcile, 'complete', 'Secure key ready');
-
+                        
                         // Show final key after privacy amplification
                         elements.finalKeySection.style.display = 'block';
                         elements.finalKeyDisplay.textContent = data.final_key;
-
+                        
                         // Enable communication
                         elements.messageInput.disabled = false;
                         elements.encrypt.disabled = false;
                         elements.decrypt.disabled = false;
                         protocolState.currentStep = 3;
-
+                        
                         addChatMessage('system', 'System', `Secure key established (${data.final_key_length} bits after privacy amplification)`);
                     }
-
+                    
                     // Show sifted keys
-                    document.getElementById('alice-bits').innerHTML +=
+                    document.getElementById('alice-bits').innerHTML += 
                         `<div style="width:100%;margin-top:8px;font-size:0.8rem;color:var(--text-secondary);">Sifted: ${data.alice_key}</div>`;
-                    document.getElementById('bob-results').innerHTML +=
+                    document.getElementById('bob-results').innerHTML += 
                         `<div style="width:100%;margin-top:8px;font-size:0.8rem;color:var(--text-secondary);">Sifted: ${data.bob_key}</div>`;
-
+                    
                 } catch (error) {
                     updateStatus(elements.statusElements.reconcile, 'error', 'Reconciliation failed');
                     console.error('Error:', error);
@@ -948,7 +949,7 @@ HTML_TEMPLATE = """
             elements.encrypt.addEventListener('click', async () => {
                 const message = elements.messageInput.value.trim();
                 if (!message) return;
-
+                
                 try {
                     const response = await fetch('/encrypt', {
                         method: 'POST',
@@ -956,13 +957,13 @@ HTML_TEMPLATE = """
                         body: JSON.stringify({ message })
                     });
                     const data = await response.json();
-
+                    
                     protocolState.encryptedMessages.push({
                         original: message,
                         encrypted: data.encrypted,
                         key: data.key
                     });
-
+                    
                     addChatMessage('alice', 'Alice', message, data.encrypted);
                     elements.messageInput.value = '';
                 } catch (error) {
@@ -976,9 +977,9 @@ HTML_TEMPLATE = """
                     addChatMessage('system', 'System', 'No messages to decrypt');
                     return;
                 }
-
+                
                 const lastMessage = protocolState.encryptedMessages[protocolState.encryptedMessages.length - 1];
-
+                
                 try {
                     const response = await fetch('/decrypt', {
                         method: 'POST',
@@ -986,7 +987,7 @@ HTML_TEMPLATE = """
                         body: JSON.stringify({ encrypted: lastMessage.encrypted, key: lastMessage.key })
                     });
                     const data = await response.json();
-
+                    
                     addChatMessage('bob', 'Bob', `Decrypted: ${data.decrypted}`);
                 } catch (error) {
                     console.error('Decryption error:', error);
@@ -1007,20 +1008,20 @@ class BB84Protocol:
     def __init__(self):
         self.basis_map = {0: 'Z', 1: 'X'}
         self.bit_map = {0: '0', 1: '1'}
-
+    
     def generate_random_sequence(self, length=64):  # Increased from 16 to 64 for robust key
         return [secrets.randbelow(2) for _ in range(length)]
-
+    
     def prepare_qubits(self, bits, bases):
         return [(self.basis_map[basis], bit) for bit, basis in zip(bits, bases)]
-
+    
     def measure_qubit(self, qubit, basis_str):
         qubit_basis, qubit_value = qubit
         return qubit_value if qubit_basis == basis_str else secrets.randbelow(2)
-
+    
     def measure_qubits(self, qubits, bases):
         return [self.measure_qubit(qubit, self.basis_map[basis]) for qubit, basis in zip(qubits, bases)]
-
+    
     def simulate_eavesdropping(self, qubits):
         eaves_bases = self.generate_random_sequence(len(qubits))
         tampered_qubits = []
@@ -1029,24 +1030,24 @@ class BB84Protocol:
             eve_result = self.measure_qubit(qubit, basis_str)
             tampered_qubits.append((basis_str, eve_result))
         return tampered_qubits
-
+    
     def reconcile_keys(self, alice_bits, alice_bases, bob_bases, bob_results):
         matching_indices = [i for i, (a_b, b_b) in enumerate(zip(alice_bases, bob_bases)) if a_b == b_b]
         if not matching_indices:
             return {'error_rate': 0, 'alice_key': '', 'bob_key': ''}
-
+        
         alice_key = [alice_bits[i] for i in matching_indices]
         bob_key = [bob_results[i] for i in matching_indices]
-
+        
         error_count = sum(1 for a, b in zip(alice_key, bob_key) if a != b)
         error_rate = error_count / len(alice_key) if alice_key else 0
-
+        
         return {
             'error_rate': error_rate,
             'alice_key': "".join(map(str, alice_key)),
             'bob_key': "".join(map(str, bob_key))
         }
-
+    
     def privacy_amplification(self, key_string):
         """Apply SHA-256 hash for privacy amplification"""
         if not key_string:
@@ -1057,7 +1058,7 @@ class BB84Protocol:
         hash_bits = bin(int(hash_obj.hexdigest(), 16))[2:].zfill(256)
         # Take first 32 bits for manageable key
         return hash_bits[:32]
-
+    
     def encrypt_message(self, message, key):
         """XOR encryption with the key"""
         if not key:
@@ -1069,7 +1070,7 @@ class BB84Protocol:
             char_code = ord(char) ^ int(key_bits[key_index])
             encrypted.append(f"{char_code:02x}")
         return " ".join(encrypted)
-
+    
     def decrypt_message(self, encrypted_hex, key):
         """XOR decryption with the key"""
         if not key or not encrypted_hex:
@@ -1095,10 +1096,10 @@ def init_protocol():
     # Use session for per-user state instead of global dictionary
     alice_bits = protocol.generate_random_sequence(length=64)
     alice_bases = protocol.generate_random_sequence(length=64)
-
+    
     session['alice_bits'] = alice_bits
     session['alice_bases'] = alice_bases
-
+    
     return jsonify({
         'alice_bits': [protocol.bit_map[b] for b in alice_bits],
         'alice_bases': [protocol.basis_map[b] for b in alice_bases]
@@ -1107,24 +1108,24 @@ def init_protocol():
 @app.route('/measure_qubits', methods=['POST'])
 def measure_qubits():
     data = request.get_json(silent=True) or {}
-
+    
     if 'alice_bits' not in session:
         return jsonify({'status': 'error', 'message': 'Alice must generate qubits first'})
-
+    
     alice_bits = session['alice_bits']
     alice_bases = session['alice_bases']
-
+    
     qubits = protocol.prepare_qubits(alice_bits, alice_bases)
-
+    
     if data.get('eavesdrop'):
         qubits = protocol.simulate_eavesdropping(qubits)
-
+    
     bob_bases = protocol.generate_random_sequence(len(qubits))
     bob_results = protocol.measure_qubits(qubits, bob_bases)
-
+    
     session['bob_bases'] = bob_bases
     session['bob_results'] = bob_results
-
+    
     return jsonify({
         'bob_bases': [protocol.basis_map[b] for b in bob_bases],
         'bob_results': [protocol.bit_map[b] for b in bob_results]
@@ -1134,36 +1135,36 @@ def measure_qubits():
 def reconcile():
     if 'alice_bits' not in session or 'bob_results' not in session:
         return jsonify({'status': 'error', 'message': 'Both parties must complete their steps'})
-
+    
     result = protocol.reconcile_keys(
         session['alice_bits'], session['alice_bases'],
         session['bob_bases'], session['bob_results']
     )
-
+    
     # Privacy amplification
     alice_final_key = protocol.privacy_amplification(result['alice_key'])
     bob_final_key = protocol.privacy_amplification(result['bob_key'])
-
+    
     session['final_key'] = alice_final_key
-
+    
     result['final_key'] = alice_final_key
     result['final_key_length'] = len(alice_final_key)
     result['eavesdrop_detected'] = result['error_rate'] > 0.1
     result['status'] = 'success'
-
+    
     return jsonify(result)
 
 @app.route('/encrypt', methods=['POST'])
 def encrypt():
     data = request.get_json()
     message = data.get('message', '')
-
+    
     if 'final_key' not in session:
         return jsonify({'status': 'error', 'message': 'No key established'})
-
+    
     final_key = session['final_key']
     encrypted = protocol.encrypt_message(message, final_key)
-
+    
     return jsonify({
         'encrypted': encrypted,
         'key': final_key,
@@ -1175,31 +1176,28 @@ def decrypt():
     data = request.get_json()
     encrypted = data.get('encrypted', '')
     key = data.get('key', '')
-
+    
     if not encrypted or not key:
         return jsonify({'status': 'error', 'message': 'Missing data'})
-
+    
     decrypted = protocol.decrypt_message(encrypted, key)
-
+    
     return jsonify({
         'decrypted': decrypted,
         'status': 'success'
     })
 
-def find_free_port(start_port=5000):
-    """Find a free port starting from start_port"""
-    port = start_port
-    while True:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            sock.bind(('127.0.0.1', port))
-            sock.close()
-            return port
-        except OSError:
-            port += 1
-            sock.close()
+@app.route('/update_server', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        repo_dir = '/home/bluSir/Nexus'
+        subprocess.run(['git', 'pull', 'origin', 'main'], cwd=repo_dir)
+        wsgi_file = '/var/www/blusir_pythonanywhere_com_wsgi.py'
+        if os.path.exists(wsgi_file):
+            os.utime(wsgi_file, None)
+        return 'Update and reload successful!', 200
+    else:
+        return 'Method not allowed', 405
 
 if __name__ == '__main__':
-    port = find_free_port(5000)
-    print(f"Starting BB84 Simulator on http://127.0.0.1:{port}")
-    app.run(debug=True, threaded=True, port=port)
+    app.run(debug=True, threaded=True)
