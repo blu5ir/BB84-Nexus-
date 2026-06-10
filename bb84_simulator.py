@@ -615,7 +615,7 @@ HTML_TEMPLATE = """
 <body>
     <div class="container">
         <header>
-            <h1>BB84 Quantum Key Distribution</h1>
+            <h1>BB84  Distribution</h1>
             <p class="subtitle">A quantum-safe protocol simulator demonstrating secure key exchange and eavesdropper detection</p>
             <div class="nav">
                 <button id="simulator-btn" class="nav-button active" onclick="showPage('simulator')">⚛️ Simulator</button>
