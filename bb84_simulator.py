@@ -1190,14 +1190,18 @@ def decrypt():
 @app.route('/update_server', methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo_dir = '/home/blu5ir/Nexus'
+        # CORRECTED: Changed to blu5ir and removed /Nexus
+        repo_dir = '/home/blu5ir'
+        
         subprocess.run(['git', 'pull', 'origin', 'main'], cwd=repo_dir)
+        
         wsgi_file = '/var/www/blu5ir_pythonanywhere_com_wsgi.py'
         if os.path.exists(wsgi_file):
             os.utime(wsgi_file, None)
+            
         return 'Update and reload successful!', 200
     else:
         return 'Method not allowed', 405
-
+    
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
